@@ -2,6 +2,7 @@ resource "aws_dynamodb_table" "table" {
   attribute               = [
     "${var.attributes}"
   ]
+  billing_mode            = "${var.billing_mode}"
   global_secondary_index  = [
     "${var.global_secondary_indexes}"
   ]
@@ -36,6 +37,7 @@ resource "aws_dynamodb_table" "table" {
 }
 
 resource "aws_appautoscaling_target" "table_read" {
+  count               = "${var.billing_mode == "PROVISIONED" ? 1 : 0}"
   max_capacity        = "${var.read_capacity["max"]}"
   min_capacity        = "${var.read_capacity["min"]}"
   resource_id         = "table/${aws_dynamodb_table.table.name}"
@@ -45,6 +47,7 @@ resource "aws_appautoscaling_target" "table_read" {
 }
 
 resource "aws_appautoscaling_policy" "table_read" {
+  count               = "${var.billing_mode == "PROVISIONED" ? 1 : 0}"
   name                = "DynamoDBReadCapacityUtilization:${aws_appautoscaling_target.table_read.resource_id}"
   policy_type         = "TargetTrackingScaling"
   resource_id         = "${aws_appautoscaling_target.table_read.resource_id}"
@@ -59,6 +62,7 @@ resource "aws_appautoscaling_policy" "table_read" {
 }
 
 resource "aws_appautoscaling_target" "table_write" {
+  count               = "${var.billing_mode == "PROVISIONED" ? 1 : 0}"
   max_capacity        = "${var.write_capacity["max"]}"
   min_capacity        = "${var.write_capacity["min"]}"
   resource_id         = "table/${aws_dynamodb_table.table.name}"
@@ -68,6 +72,7 @@ resource "aws_appautoscaling_target" "table_write" {
 }
 
 resource "aws_appautoscaling_policy" "table_write" {
+  count               = "${var.billing_mode == "PROVISIONED" ? 1 : 0}"
   name                = "DynamoDBWriteCapacityUtilization:${aws_appautoscaling_target.table_write.resource_id}"
   policy_type         = "TargetTrackingScaling"
   resource_id         = "${aws_appautoscaling_target.table_write.resource_id}"
@@ -82,7 +87,7 @@ resource "aws_appautoscaling_policy" "table_write" {
 }
 
 resource "aws_appautoscaling_target" "global_secondary_index_read" {
-  count               = "${local.global_secondary_indexes_count}"
+  count               = "${var.billing_mode == "PROVISIONED" ? local.global_secondary_indexes_count : 0}"
   max_capacity        = "${var.read_capacity["max"]}"
   min_capacity        = "${var.read_capacity["min"]}"
   resource_id         = "table/${aws_dynamodb_table.table.name}/index/${lookup(var.global_secondary_indexes[count.index], "name")}"
@@ -92,7 +97,7 @@ resource "aws_appautoscaling_target" "global_secondary_index_read" {
 }
 
 resource "aws_appautoscaling_policy" "global_secondary_index_read" {
-  count               = "${local.global_secondary_indexes_count}"
+  count               = "${var.billing_mode == "PROVISIONED" ? local.global_secondary_indexes_count : 0}"
   name                = "DynamoDBReadCapacityUtilization:${aws_appautoscaling_target.global_secondary_index_read.*.resource_id[count.index]}"
   policy_type         = "TargetTrackingScaling"
   resource_id         = "${aws_appautoscaling_target.global_secondary_index_read.*.resource_id[count.index]}"
@@ -107,7 +112,7 @@ resource "aws_appautoscaling_policy" "global_secondary_index_read" {
 }
 
 resource "aws_appautoscaling_target" "global_secondary_index_write" {
-  count               = "${local.global_secondary_indexes_count}"
+  count               = "${var.billing_mode == "PROVISIONED" ? local.global_secondary_indexes_count : 0}"
   max_capacity        = "${var.write_capacity["max"]}"
   min_capacity        = "${var.write_capacity["min"]}"
   resource_id         = "table/${aws_dynamodb_table.table.name}/index/${lookup(var.global_secondary_indexes[count.index], "name")}"
@@ -117,7 +122,7 @@ resource "aws_appautoscaling_target" "global_secondary_index_write" {
 }
 
 resource "aws_appautoscaling_policy" "global_secondary_index_write" {
-  count               = "${local.global_secondary_indexes_count}"
+  count               = "${var.billing_mode == "PROVISIONED" ? local.global_secondary_indexes_count : 0}"
   name                = "DynamoDBReadCapacityUtilization:${aws_appautoscaling_target.global_secondary_index_write.*.resource_id[count.index]}"
   policy_type         = "TargetTrackingScaling"
   resource_id         = "${aws_appautoscaling_target.global_secondary_index_write.*.resource_id[count.index]}"

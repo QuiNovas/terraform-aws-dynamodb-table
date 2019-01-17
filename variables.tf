@@ -8,6 +8,12 @@ variable "autoscaling_service_role_arn" {
   type        = "string"
 }
 
+variable "billing_mode" {
+  default     = "PROVISIONED"
+  description = "Controls how you are charged for read and write throughput and how you manage capacity. The valid values are PROVISIONED and PAY_PER_REQUEST."
+  type        = "string"
+}
+
 variable "global_secondary_indexes" {
   default     = []
   description = "Describe a GSO for the table; subject to the normal limits on the number of GSIs, projected attributes, etc."
