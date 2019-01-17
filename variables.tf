@@ -4,7 +4,8 @@ variable "attributes" {
 }
 
 variable "autoscaling_service_role_arn" {
-  description = "The ARN of the IAM role that allows Application AutoScaling to modify your scalable target on your behalf."
+  default     = ""
+  description = "The ARN of the IAM role that allows Application AutoScaling to modify your scalable target on your behalf. Required if billing_mode is PROVISIONED."
   type        = "string"
 }
 
