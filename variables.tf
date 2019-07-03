@@ -1,6 +1,9 @@
 variable "attributes" {
   description = "List of nested attribute definitions. Only required for hash_key and range_key attributes."
-  type        = list(string)
+  type = list(object({
+    name = string
+    type = string
+  }))
 }
 
 variable "autoscaling_service_role_arn" {
@@ -18,13 +21,22 @@ variable "billing_mode" {
 variable "global_secondary_indexes" {
   default     = []
   description = "Describe a GSO for the table; subject to the normal limits on the number of GSIs, projected attributes, etc."
-  type        = list(string)
+  #object arguments cannot be set optional when writing this, so need them to define from calling module with null.
+    type = list(object({
+      hash_key           = string
+      name               = string
+      non_key_attributes = list(string)
+      projection_type    = string
+      range_key          = string
+      read_capacity      = number
+      write_capacity     = number
+  }))
 }
 
 variable "global_secondary_indexes_count" {
   default     = 0
   description = "The number of GSIs"
-  type        = string
+  type        = number
 }
 
 variable "hash_key" {
@@ -35,7 +47,12 @@ variable "hash_key" {
 variable "local_secondary_indexes" {
   default     = []
   description = "Describe an LSI on the table; these can only be allocated at creation so you cannot change this definition after you have created the resource."
-  type        = list(string)
+  type = list(object({
+      name               = string
+      non_key_attributes = list(string)
+      projection_type    = string
+      range_key          = string
+  }))
 }
 
 variable "name" {
@@ -49,7 +66,7 @@ variable "read_capacity" {
     min = 1
   }
   description = "The number of read units for this table, expressed as min and max."
-  type        = map(string)
+  type        = map(number)
 }
 
 variable "range_key" {
@@ -82,6 +99,6 @@ variable "write_capacity" {
     min = 1
   }
   description = "The number of write units for this table, expressed as min and max."
-  type        = map(string)
+  type        = map(number)
 }
 

@@ -1,54 +1,55 @@
 resource "aws_dynamodb_table" "table" {
   dynamic "attribute" {
-    for_each = [var.attributes]
+    for_each = [for attribute in var.attributes: {
+      name = attribute.name
+      type = attribute.type
+    }]
     content {
-      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-      # which keys might be set in maps assigned here, so it has
-      # produced a comprehensive set here. Consider simplifying
-      # this after confirming which keys can be set in practice.
-
       name = attribute.value.name
       type = attribute.value.type
     }
   }
   billing_mode = var.billing_mode
   dynamic "global_secondary_index" {
-    for_each = [var.global_secondary_indexes]
+    for_each = [for global_secondary_index in var.global_secondary_indexes:{
+      hash_key           = global_secondary_index.hash_key
+      name               = global_secondary_index.name
+      non_key_attributes = global_secondary_index.non_key_attributes
+      projection_type    = global_secondary_index.projection_type
+      range_key          = global_secondary_index.range_key
+      read_capacity      = global_secondary_index.read_capacity
+      write_capacity     = global_secondary_index.write_capacity
+    }]
     content {
-      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-      # which keys might be set in maps assigned here, so it has
-      # produced a comprehensive set here. Consider simplifying
-      # this after confirming which keys can be set in practice.
-
       hash_key           = global_secondary_index.value.hash_key
       name               = global_secondary_index.value.name
-      non_key_attributes = lookup(global_secondary_index.value, "non_key_attributes", null)
+      non_key_attributes = global_secondary_index.value.non_key_attributes
       projection_type    = global_secondary_index.value.projection_type
-      range_key          = lookup(global_secondary_index.value, "range_key", null)
-      read_capacity      = lookup(global_secondary_index.value, "read_capacity", null)
-      write_capacity     = lookup(global_secondary_index.value, "write_capacity", null)
+      range_key          = global_secondary_index.value.range_key
+      read_capacity      = global_secondary_index.value.read_capacity
+      write_capacity     = global_secondary_index.value.write_capacity
     }
   }
   hash_key = var.hash_key
   lifecycle {
+    #Cannot list block type arguments inside this
     ignore_changes = [
-      global_secondary_index.read_capacity,
-      global_secondary_index.write_capacity,
       read_capacity,
       write_capacity,
+      ttl
     ]
     prevent_destroy = true
   }
   dynamic "local_secondary_index" {
-    for_each = [var.local_secondary_indexes]
+    for_each = [for local_secondary_index in var.local_secondary_indexes:{
+      name               = local_secondary_index.name
+      non_key_attributes = local_secondary_index.non_key_attributes
+      projection_type    = local_secondary_index.projection_type
+      range_key          = local_secondary_index.range_key
+    }]
     content {
-      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-      # which keys might be set in maps assigned here, so it has
-      # produced a comprehensive set here. Consider simplifying
-      # this after confirming which keys can be set in practice.
-
       name               = local_secondary_index.value.name
-      non_key_attributes = lookup(local_secondary_index.value, "non_key_attributes", null)
+      non_key_attributes = local_secondary_index.value.non_key_attributes
       projection_type    = local_secondary_index.value.projection_type
       range_key          = local_secondary_index.value.range_key
     }
