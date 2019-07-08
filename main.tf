@@ -1,33 +1,22 @@
 resource "aws_dynamodb_table" "table" {
   dynamic "attribute" {
-    for_each = [for attribute in var.attributes: {
-      name = attribute.name
-      type = attribute.type
-    }]
+    for_each = var.attribute
     content {
       name = attribute.value.name
-      type = attribute.value.type
+      type = attribute.value.type 
     }
   }
   billing_mode = var.billing_mode
   dynamic "global_secondary_index" {
-    for_each = [for global_secondary_index in var.global_secondary_indexes:{
-      hash_key           = global_secondary_index.hash_key
-      name               = global_secondary_index.name
-      non_key_attributes = global_secondary_index.non_key_attributes
-      projection_type    = global_secondary_index.projection_type
-      range_key          = global_secondary_index.range_key
-      read_capacity      = global_secondary_index.read_capacity
-      write_capacity     = global_secondary_index.write_capacity
-    }]
+    for_each = var.global_secondary_index
     content {
       hash_key           = global_secondary_index.value.hash_key
       name               = global_secondary_index.value.name
-      non_key_attributes = global_secondary_index.value.non_key_attributes
+      non_key_attributes = lookup(global_secondary_index.value, "non_key_attributes", null)
       projection_type    = global_secondary_index.value.projection_type
-      range_key          = global_secondary_index.value.range_key
-      read_capacity      = global_secondary_index.value.read_capacity
-      write_capacity     = global_secondary_index.value.write_capacity
+      range_key          = lookup(global_secondary_index.value, "range_key", null)
+      read_capacity      = lookup(global_secondary_index.value, "read_capacity", null)
+      write_capacity     = lookup(global_secondary_index.value, "write_capacity", null)
     }
   }
   hash_key = var.hash_key
@@ -41,15 +30,10 @@ resource "aws_dynamodb_table" "table" {
     prevent_destroy = true
   }
   dynamic "local_secondary_index" {
-    for_each = [for local_secondary_index in var.local_secondary_indexes:{
-      name               = local_secondary_index.name
-      non_key_attributes = local_secondary_index.non_key_attributes
-      projection_type    = local_secondary_index.projection_type
-      range_key          = local_secondary_index.range_key
-    }]
+    for_each = var.local_secondary_index
     content {
       name               = local_secondary_index.value.name
-      non_key_attributes = local_secondary_index.value.non_key_attributes
+      non_key_attributes = lookup(local_secondary_index.value, "non_key_attributes", null)
       projection_type    = local_secondary_index.value.projection_type
       range_key          = local_secondary_index.value.range_key
     }
@@ -124,7 +108,7 @@ resource "aws_appautoscaling_target" "global_secondary_index_read" {
   count              = var.billing_mode == "PROVISIONED" ? local.global_secondary_indexes_count : 0
   max_capacity       = var.read_capacity["max"]
   min_capacity       = var.read_capacity["min"]
-  resource_id        = "table/${aws_dynamodb_table.table.name}/index/${var.global_secondary_indexes[count.index]["name"]}"
+  resource_id        = "table/${aws_dynamodb_table.table.name}/index/${var.global_secondary_index[count.index]["name"]}"
   role_arn           = var.autoscaling_service_role_arn
   scalable_dimension = "dynamodb:index:ReadCapacityUnits"
   service_namespace  = "dynamodb"
@@ -149,7 +133,7 @@ resource "aws_appautoscaling_target" "global_secondary_index_write" {
   count              = var.billing_mode == "PROVISIONED" ? local.global_secondary_indexes_count : 0
   max_capacity       = var.write_capacity["max"]
   min_capacity       = var.write_capacity["min"]
-  resource_id        = "table/${aws_dynamodb_table.table.name}/index/${var.global_secondary_indexes[count.index]["name"]}"
+  resource_id        = "table/${aws_dynamodb_table.table.name}/index/${var.global_secondary_index[count.index]["name"]}"
   role_arn           = var.autoscaling_service_role_arn
   scalable_dimension = "dynamodb:index:WriteCapacityUnits"
   service_namespace  = "dynamodb"
