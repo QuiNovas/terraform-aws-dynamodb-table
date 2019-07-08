@@ -108,7 +108,7 @@ resource "aws_appautoscaling_target" "global_secondary_index_read" {
   count              = var.billing_mode == "PROVISIONED" ? local.global_secondary_indexes_count : 0
   max_capacity       = var.read_capacity["max"]
   min_capacity       = var.read_capacity["min"]
-  resource_id        = "table/${aws_dynamodb_table.table.name}/index/${var.global_secondary_indexes[count.index]["name"]}"
+  resource_id        = "table/${aws_dynamodb_table.table.name}/index/${var.global_secondary_index[count.index]["name"]}"
   role_arn           = var.autoscaling_service_role_arn
   scalable_dimension = "dynamodb:index:ReadCapacityUnits"
   service_namespace  = "dynamodb"
@@ -133,7 +133,7 @@ resource "aws_appautoscaling_target" "global_secondary_index_write" {
   count              = var.billing_mode == "PROVISIONED" ? local.global_secondary_indexes_count : 0
   max_capacity       = var.write_capacity["max"]
   min_capacity       = var.write_capacity["min"]
-  resource_id        = "table/${aws_dynamodb_table.table.name}/index/${var.global_secondary_indexes[count.index]["name"]}"
+  resource_id        = "table/${aws_dynamodb_table.table.name}/index/${var.global_secondary_index[count.index]["name"]}"
   role_arn           = var.autoscaling_service_role_arn
   scalable_dimension = "dynamodb:index:WriteCapacityUnits"
   service_namespace  = "dynamodb"

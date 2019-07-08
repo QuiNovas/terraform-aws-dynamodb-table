@@ -95,4 +95,3 @@ variable "write_capacity" {
   description = "The number of write units for this table, expressed as min and max."
   type        = map(number)
 }
-
