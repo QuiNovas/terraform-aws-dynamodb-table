@@ -1,4 +1,4 @@
-variable "attributes" {
+variable "attribute" {
   description = "List of nested attribute definitions. Only required for hash_key and range_key attributes."
   type = list(object({
     name = string
@@ -18,7 +18,7 @@ variable "billing_mode" {
   type        = string
 }
 
-variable "global_secondary_indexes" {
+variable "global_secondary_index" {
   default     = []
   description = "Describe a GSO for the table; subject to the normal limits on the number of GSIs, projected attributes, etc."
   #object arguments cannot be set optional when writing this, so need them to define from calling module with null.
@@ -33,18 +33,12 @@ variable "global_secondary_indexes" {
   }))
 }
 
-variable "global_secondary_indexes_count" {
-  default     = 0
-  description = "The number of GSIs"
-  type        = number
-}
-
 variable "hash_key" {
   description = "The attribute to use as the hash (partition) key. Must also be defined as an attribute, see below."
   type        = string
 }
 
-variable "local_secondary_indexes" {
+variable "local_secondary_index" {
   default     = []
   description = "Describe an LSI on the table; these can only be allocated at creation so you cannot change this definition after you have created the resource."
   type = list(object({
@@ -101,4 +95,3 @@ variable "write_capacity" {
   description = "The number of write units for this table, expressed as min and max."
   type        = map(number)
 }
-
