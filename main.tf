@@ -21,8 +21,8 @@ resource "aws_dynamodb_table" "table" {
   }
   hash_key = var.hash_key
   lifecycle {
-    #Cannot list block type arguments inside this
     ignore_changes = [
+      global_secondary_index,
       read_capacity,
       write_capacity,
       ttl
