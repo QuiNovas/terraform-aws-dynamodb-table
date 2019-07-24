@@ -3,7 +3,7 @@ resource "aws_dynamodb_table" "table" {
     for_each = var.attribute
     content {
       name = attribute.value.name
-      type = attribute.value.type 
+      type = attribute.value.type
     }
   }
   billing_mode = var.billing_mode
@@ -40,10 +40,11 @@ resource "aws_dynamodb_table" "table" {
   }
   name          = var.name
   range_key     = var.range_key
-  read_capacity = var.read_capacity["min"]
+  read_capacity = var.billing_mode == "PROVISIONED" ? var.read_capacity["min"] : null
   server_side_encryption {
     enabled = true
   }
+
   stream_enabled   = length(var.stream_view_type) > 0 ? true : false
   stream_view_type = var.stream_view_type
   tags             = local.tags
@@ -51,7 +52,7 @@ resource "aws_dynamodb_table" "table" {
     attribute_name = var.ttl_attribute_name
     enabled        = length(var.ttl_attribute_name) > 0 ? true : false
   }
-  write_capacity = var.write_capacity["min"]
+  write_capacity = var.billing_mode == "PROVISIONED" ? var.write_capacity["min"] : null
 }
 
 resource "aws_appautoscaling_target" "table_read" {
