@@ -44,6 +44,7 @@ resource "aws_dynamodb_table" "table" {
   server_side_encryption {
     enabled = true
   }
+
   stream_enabled   = length(var.stream_view_type) > 0 ? true : false
   stream_view_type = var.stream_view_type
   tags             = local.tags
