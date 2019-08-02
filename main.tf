@@ -55,6 +55,9 @@ resource "aws_dynamodb_table" "table" {
     }
   }
   name          = var.name
+  point_in_time_recovery {
+    enabled = true
+  }
   range_key     = var.range_key
   read_capacity = var.read_capacity["min"]
   server_side_encryption {
