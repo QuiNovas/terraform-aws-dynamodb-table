@@ -40,7 +40,7 @@ resource "aws_dynamodb_table" "table" {
   }
   name          = var.name
   point_in_time_recovery {
-    enabled =true
+    enabled = var.point_in_time_recovery
   }
   range_key     = var.range_key
   read_capacity = var.billing_mode == "PROVISIONED" ? var.read_capacity["min"] : null
