@@ -54,9 +54,9 @@ variable "name" {
   type        = string
 }
 
-variable "point_in_recovery" {
-   default = false
-   type = bool
+variable "point_in_time_recovery" {
+  default = false
+  type    = bool
 }
 
 
