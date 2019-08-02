@@ -38,7 +38,10 @@ resource "aws_dynamodb_table" "table" {
       range_key          = local_secondary_index.value.range_key
     }
   }
-  name          = var.name
+  name = var.name
+  point_in_time_recovery {
+    enabled = var.point_in_time_recovery
+  }
   range_key     = var.range_key
   read_capacity = var.billing_mode == "PROVISIONED" ? var.read_capacity["min"] : null
   server_side_encryption {
