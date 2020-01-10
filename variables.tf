@@ -18,6 +18,13 @@ variable "billing_mode" {
   type        = string
 }
 
+variable "glue_crawler" {
+  default = {
+  }
+  description = "If present, glue crawler is created to crawl the table. Should consist of database_name, schedule (cron expression) and description(can be null)"
+  type        = map(string)
+}
+
 variable "global_secondary_index" {
   default     = []
   description = "Describe a GSO for the table; subject to the normal limits on the number of GSIs, projected attributes, etc."
@@ -58,7 +65,6 @@ variable "point_in_time_recovery" {
   default = false
   type    = bool
 }
-
 
 variable "read_capacity" {
   default = {
