@@ -27,17 +27,18 @@ variable "glue_crawler" {
 
 variable "global_secondary_index" {
   default     = []
-  description = "Describe a GSO for the table; subject to the normal limits on the number of GSIs, projected attributes, etc."
-  #object arguments cannot be set optional when writing this, so need them to define from calling module with null.
-  type = list(object({
-    hash_key           = string
-    name               = string
-    non_key_attributes = list(string)
-    projection_type    = string
-    range_key          = string
-    read_capacity      = number
-    write_capacity     = number
-  }))
+  description = "Describe a GSO for the table; subject to the normal limits on the number of GSIs, projected attributes, etc. Look at global_secondary_index for the attributes https://www.terraform.io/docs/providers/aws/r/dynamodb_table.html#global_secondary_index"
+  type = any
+
+  #list(object({
+  #   hash_key           = string
+  #   name               = string
+  #   non_key_attributes = list(string)
+  #   projection_type    = string
+  #   range_key          = string
+  #   read_capacity      = number
+  #   write_capacity     = number
+  # }))
 }
 
 variable "hash_key" {
@@ -47,13 +48,15 @@ variable "hash_key" {
 
 variable "local_secondary_index" {
   default     = []
-  description = "Describe an LSI on the table; these can only be allocated at creation so you cannot change this definition after you have created the resource."
-  type = list(object({
-    name               = string
-    non_key_attributes = list(string)
-    projection_type    = string
-    range_key          = string
-  }))
+  description = "Describe an LSI on the table; these can only be allocated at creation so you cannot change this definition after you have created the resource.Look at local_secondary_index for the attributes https://www.terraform.io/docs/providers/aws/r/dynamodb_table.html#local_secondary_index"
+  type = any
+  
+  # list(object({
+  #   name               = string
+  #   non_key_attributes = list(string)
+  #   projection_type    = string
+  #   range_key          = string
+  # }))
 }
 
 variable "name" {
