@@ -111,11 +111,13 @@ variable "write_capacity" {
   type        = map(number)
 }
 
+
 variable "replica" {
   default     = []
-  description = "List of nested attribute definitions for replica configuration"
-  type = list(object({
-    region_name = string
-    kms_key_arn = string
-  }))
+  description = "List of nested region_names and kms_key_arn (optional) for replica configuration"
+  type        = any
+  # type = list(object({
+  #   region_name = string
+  #   kms_key_arn = string
+  # }))
 }
