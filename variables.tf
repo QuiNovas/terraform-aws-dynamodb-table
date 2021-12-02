@@ -28,7 +28,7 @@ variable "glue_crawler" {
 variable "global_secondary_index" {
   default     = []
   description = "Describe a GSO for the table; subject to the normal limits on the number of GSIs, projected attributes, etc. Look at global_secondary_index for the attributes https://www.terraform.io/docs/providers/aws/r/dynamodb_table.html#global_secondary_index"
-  type = any
+  type        = any
 
   #list(object({
   #   hash_key           = string
@@ -49,8 +49,8 @@ variable "hash_key" {
 variable "local_secondary_index" {
   default     = []
   description = "Describe an LSI on the table; these can only be allocated at creation so you cannot change this definition after you have created the resource.Look at local_secondary_index for the attributes https://www.terraform.io/docs/providers/aws/r/dynamodb_table.html#local_secondary_index"
-  type = any
-  
+  type        = any
+
   # list(object({
   #   name               = string
   #   non_key_attributes = list(string)
@@ -109,4 +109,15 @@ variable "write_capacity" {
   }
   description = "The number of write units for this table, expressed as min and max."
   type        = map(number)
+}
+
+
+variable "replica" {
+  default     = []
+  description = "List of nested region_names and kms_key_arn (optional) for replica configuration"
+  type        = any
+  # type = list(object({
+  #   region_name = string
+  #   kms_key_arn = string
+  # }))
 }
