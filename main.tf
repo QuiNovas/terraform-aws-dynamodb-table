@@ -55,6 +55,14 @@ resource "aws_dynamodb_table" "table" {
     enabled        = length(var.ttl_attribute_name) > 0 ? true : false
   }
   write_capacity = var.billing_mode == "PROVISIONED" ? var.write_capacity["min"] : null
+
+  dynamic "replica" {
+    for_each = var.replica
+    content {
+      region_name = replica.value.region_name
+      kms_key_arn = lookup(replica.value, "kms_key_arn", null)
+    }
+  }
 }
 
 resource "aws_appautoscaling_target" "table_read" {
