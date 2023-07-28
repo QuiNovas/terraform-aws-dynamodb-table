@@ -18,6 +18,12 @@ variable "billing_mode" {
   type        = string
 }
 
+variable "deletion_protection_enabled" {
+  default     = false
+  description = "Enables deletion protection for table. Defaults to 'false'"
+  type        = bool
+}
+
 variable "glue_crawler" {
   default = {
   }

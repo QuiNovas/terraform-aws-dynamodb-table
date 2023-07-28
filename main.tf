@@ -6,7 +6,8 @@ resource "aws_dynamodb_table" "table" {
       type = attribute.value.type
     }
   }
-  billing_mode = var.billing_mode
+  billing_mode                = var.billing_mode
+  deletion_protection_enabled = var.deletion_protection_enabled
   dynamic "global_secondary_index" {
     for_each = var.global_secondary_index
     content {
